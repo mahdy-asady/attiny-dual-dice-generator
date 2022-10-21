@@ -1,0 +1,9 @@
+{
+    "cmake.configureSettings": {
+    },
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "*.c": "c",
+        "*.h": "c"
+    }
+}
