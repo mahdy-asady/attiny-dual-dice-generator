@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.20)
 
+set( F_CPU "600000UL")
 set( PROCESSOR "attiny13a")
 set( MCU "t13")
 
 set(PROJECT_PATH "src/app/${PROJECT}")
 
-set(CDEFS     "-DF_CPU=${F_CPU} -DBAUD=${BAUD} -D${PROCESSOR}")
+set(CDEFS     "-DF_CPU=${F_CPU} -D${PROCESSOR}")
 set(CSTANDARD "-std=gnu99")
 set(CWARN     "-Wall -Wextra -Wstrict-prototypes -Wshadow -Wdouble-promotion -Wundef -fno-common -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable")
 
@@ -45,6 +46,7 @@ project(Dice C ASM)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build")
 
 set(INC_FILES src/main.c
+    src/shiftRegister.c
 )
 
 add_executable(${PROJECT_NAME} ${INC_FILES})
@@ -65,6 +67,6 @@ add_custom_target(hex   ALL     ${OBJCOPY} -R .eeprom -O ihex "${PROJECT_NAME}.e
 add_custom_target(eeprom        ${OBJCOPY} -j .eeprom --change-section-lma .eeprom=0 -O ihex "${PROJECT_NAME}.elf" "${PROJECT_NAME}.eeprom" DEPENDS strip)
 
 add_custom_target(flash avrdude -c usbasp -p ${MCU} -U flash:w:${PROJECT_NAME}.hex DEPENDS hex)
-add_custom_target(fuse avrdude -c usbasp -p ${MCU} -U lfuse:w:0xC1:m && avrdude -c usbasp -p ${MCU} -U hfuse:w:0x99:m && avrdude -c usbasp -p ${MCU} -U lock:w:0xFF:m)
+add_custom_target(fuse avrdude -c usbasp -p ${MCU} -U lfuse:w:0x69:m -U hfuse:w:0xFF:m -U lock:w:0xFF:m)
 
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${PROJECT_NAME}.hex;${PROJECT_NAME}.eeprom;${PROJECT_NAME}.lst")
